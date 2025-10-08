@@ -3,31 +3,685 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Under development - Placeholder</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>10 Puzzle Games - Unlock the Secret</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 5px;
+            margin-bottom: 30px;
+        }
+        
+        .progress-fill {
+            height: 30px;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .game-card.completed {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        }
+        
+        .game-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkmark {
+            color: #10b981;
+            font-size: 1.2em;
+            display: none;
+        }
+        
+        .completed .checkmark {
+            display: inline;
+        }
+        
+        .game-content {
+            margin-top: 15px;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .secret-message {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            animation: fadeIn 1s ease;
+        }
+        
+        .secret-message.revealed {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .secret-message h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        
+        .secret-message p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .grid-game {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .grid-cell {
+            aspect-ratio: 1;
+            border: 2px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .grid-cell.active {
+            background: #667eea;
+        }
+        
+        .color-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 5px;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        
+        .color-box.selected {
+            border-color: #333;
+        }
+        
+        .slider-container {
+            margin: 10px 0;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .slider-value {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        
+        .math-question {
+            font-size: 1.1em;
+            text-align: center;
+            margin: 10px 0;
+            color: #333;
+        }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .feedback.correct {
+            background: #d4fc79;
+            color: #059669;
+        }
+        
+        .feedback.incorrect {
+            background: #fecaca;
+            color: #dc2626;
+        }
+    </style>
 </head>
 <body>
-    <div id="dial-container">
-        <h1>This site is currently in the conceptual phase and acts as a placeholder.</h1>
-        <p>For now click on a number for some motivation.</p>
-        <button id="number-0">0</button>
-        <button id="number-1">1</button>
-        <button id="number-2">2</button>
-        <button id="number-3">3</button>
-        <button id="number-4">4</button>
-        <button id="number-5">5</button>
-        <button id="number-6">6</button>
-        <button id="number-7">7</button>
-        <button id="number-8">8</button>
-        <button id="number-9">9</button>
+    <div class="container">
+        <h1>🧩 12 Puzzle Challenge 🧩</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar">0/12 Completed</div>
+        </div>
+        
+        <div class="games-grid" id="gamesGrid"></div>
+        
+        <div class="secret-message" id="secretMessage">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You've completed all 12 puzzles!</p>
+            <p style="margin-top: 20px; font-size: 1.5em; color: #667eea; font-weight: bold;">
+                The Secret Message:
+            </p>
+            <p style="margin-top: 15px; font-size: 1.8em; color: #764ba2; font-weight: bold;">
+                "CURIOSITY AND PERSISTENCE UNLOCK ALL DOORS"
+            </p>
+            <p style="margin-top: 20px; font-style: italic;">
+                You've proven that with determination, any challenge can be overcome!
+            </p>
+            <button onclick="resetGame()" style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                Play Again
+            </button>
+        </div>
     </div>
 
-    <div id="message-container">
-        <!-- Message will be displayed here -->
-    </div>
+    <script>
+        const games = {
+            completed: new Set(),
+            
+            checkCompletion() {
+                const progressBar = document.getElementById('progressBar');
+                const count = this.completed.size;
+                progressBar.style.width = `${(count / 12) * 100}%`;
+                progressBar.textContent = `${count}/12 Completed`;
+                
+                if (count === 12) {
+                    document.getElementById('secretMessage').classList.add('revealed');
+                    document.getElementById('gamesGrid').style.display = 'none';
+                }
+            },
+            
+            markComplete(gameId) {
+                if (!this.completed.has(gameId)) {
+                    this.completed.add(gameId);
+                    const card = document.querySelector(`[data-game="${gameId}"]`);
+                    card.classList.add('completed');
+                    this.checkCompletion();
+                }
+            }
+        };
 
-    <img src="image.jpg" alt="Rotary Phone Image" id="rotary-phone-image">
+        const gameTemplates = [
+            {
+                id: 'riddle',
+                title: '1. Riddle Master',
+                content: `
+                    <p>I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?</p>
+                    <input type="text" id="riddleInput" placeholder="Your answer...">
+                    <button onclick="checkRiddle()">Submit</button>
+                    <div id="riddleFeedback"></div>
+                `
+            },
+            {
+                id: 'math',
+                title: '2. Math Wizard',
+                content: `
+                    <div class="math-question" id="mathQuestion"></div>
+                    <input type="number" id="mathInput" placeholder="Your answer...">
+                    <button onclick="checkMath()">Submit</button>
+                    <div id="mathFeedback"></div>
+                `
+            },
+            {
+                id: 'pattern',
+                title: '3. Pattern Recognition',
+                content: `
+                    <p>Complete the sequence: 2, 6, 12, 20, 30, ?</p>
+                    <input type="number" id="patternInput" placeholder="Next number...">
+                    <button onclick="checkPattern()">Submit</button>
+                    <div id="patternFeedback"></div>
+                `
+            },
+            {
+                id: 'grid',
+                title: '4. Grid Master',
+                content: `
+                    <p>Click to form an "X" pattern:</p>
+                    <div class="grid-game" id="gridGame"></div>
+                    <button onclick="checkGrid()">Check Pattern</button>
+                    <div id="gridFeedback"></div>
+                `
+            },
+            {
+                id: 'color',
+                title: '5. Color Matcher',
+                content: `
+                    <p>Select colors in rainbow order:</p>
+                    <div id="colorBoxes"></div>
+                    <button onclick="checkColors()">Check Order</button>
+                    <div id="colorFeedback"></div>
+                `
+            },
+            {
+                id: 'word',
+                title: '6. Word Scramble',
+                content: `
+                    <p>Unscramble: <strong>ZPLEUZ</strong></p>
+                    <input type="text" id="wordInput" placeholder="Unscrambled word...">
+                    <button onclick="checkWord()">Submit</button>
+                    <div id="wordFeedback"></div>
+                `
+            },
+            {
+                id: 'slider',
+                title: '7. Perfect Balance',
+                content: `
+                    <p>Set the slider to exactly 50:</p>
+                    <div class="slider-container">
+                        <input type="range" id="balanceSlider" min="0" max="100" value="0">
+                        <div class="slider-value" id="sliderValue">0</div>
+                    </div>
+                    <button onclick="checkSlider()">Check</button>
+                    <div id="sliderFeedback"></div>
+                `
+            },
+            {
+                id: 'logic',
+                title: '8. Logic Gate',
+                content: `
+                    <p>If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops definitely Lazzies?</p>
+                    <select id="logicSelect">
+                        <option value="">Choose...</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <button onclick="checkLogic()">Submit</button>
+                    <div id="logicFeedback"></div>
+                `
+            },
+            {
+                id: 'sequence',
+                title: '9. Number Sequence',
+                content: `
+                    <p>What comes next? 1, 1, 2, 3, 5, 8, 13, ?</p>
+                    <input type="number" id="sequenceInput" placeholder="Next number...">
+                    <button onclick="checkSequence()">Submit</button>
+                    <div id="sequenceFeedback"></div>
+                `
+            },
+            {
+                id: 'cipher',
+                title: '10. Caesar Cipher',
+                content: `
+                    <p>Decode (shift by 3): <strong>SXCCOH</strong></p>
+                    <input type="text" id="cipherInput" placeholder="Decoded word...">
+                    <button onclick="checkCipher()">Submit</button>
+                    <div id="cipherFeedback"></div>
+                `
+            },
+            {
+                id: 'memory',
+                title: '11. Memory Test',
+                content: `
+                    <p>Memorize: <strong id="memoryNumber">7394</strong></p>
+                    <button onclick="hideMemoryNumber()">Hide & Test</button>
+                    <div id="memoryTest" style="display:none;">
+                        <input type="text" id="memoryInput" placeholder="Enter the number...">
+                        <button onclick="checkMemory()">Submit</button>
+                        <p id="memoryAttempts" style="margin-top: 10px; font-size: 0.9em; color: #666;"></p>
+                    </div>
+                    <div id="memoryFeedback"></div>
+                `
+            },
+            {
+                id: 'counting',
+                title: '12. Shape Counter',
+                content: `
+                    <p>How many circles? ⭕⭕🔵⭕🔵⬜⭕🔵⭕</p>
+                    <input type="number" id="countInput" placeholder="Number of circles...">
+                    <button onclick="checkCounting()">Submit</button>
+                    <div id="countFeedback"></div>
+                `
+            }
+        ];
 
-    <script src="scripts.js"></script>
+        function initGames() {
+            const grid = document.getElementById('gamesGrid');
+            gameTemplates.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.setAttribute('data-game', game.id);
+                card.innerHTML = `
+                    <div class="game-title">
+                        <span class="checkmark">✓</span>
+                        ${game.title}
+                    </div>
+                    <div class="game-content">${game.content}</div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            initGridGame();
+            initColorGame();
+            initMathGame();
+            initSlider();
+        }
+
+        function showFeedback(elementId, isCorrect, message) {
+            const el = document.getElementById(elementId);
+            el.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            el.textContent = message;
+        }
+
+        function checkRiddle() {
+            const answer = document.getElementById('riddleInput').value.toLowerCase().trim();
+            if (answer === 'echo' || answer === 'an echo') {
+                games.markComplete('riddle');
+                showFeedback('riddleFeedback', true, '✓ Correct! It\'s an echo!');
+            } else {
+                showFeedback('riddleFeedback', false, '✗ Try again!');
+            }
+        }
+
+        function initMathGame() {
+            const num1 = Math.floor(Math.random() * 20) + 10;
+            const num2 = Math.floor(Math.random() * 20) + 10;
+            window.mathAnswer = num1 + num2;
+            document.getElementById('mathQuestion').textContent = `What is ${num1} + ${num2}?`;
+        }
+
+        function checkMath() {
+            const answer = parseInt(document.getElementById('mathInput').value);
+            if (answer === window.mathAnswer) {
+                games.markComplete('math');
+                showFeedback('mathFeedback', true, '✓ Correct!');
+            } else {
+                showFeedback('mathFeedback', false, '✗ Try again!');
+            }
+        }
+
+        function checkPattern() {
+            const answer = parseInt(document.getElementById('patternInput').value);
+            if (answer === 42) {
+                games.markComplete('pattern');
+                showFeedback('patternFeedback', true, '✓ Correct! The pattern is n(n+1)');
+            } else {
+                showFeedback('patternFeedback', false, '✗ Try again!');
+            }
+        }
+
+        function initGridGame() {
+            const grid = document.getElementById('gridGame');
+            window.gridState = Array(9).fill(false);
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.onclick = () => {
+                    window.gridState[i] = !window.gridState[i];
+                    cell.classList.toggle('active');
+                };
+                grid.appendChild(cell);
+            }
+        }
+
+        function checkGrid() {
+            const xPattern = [true, false, true, false, true, false, true, false, true];
+            const isCorrect = window.gridState.every((val, i) => val === xPattern[i]);
+            if (isCorrect) {
+                games.markComplete('grid');
+                showFeedback('gridFeedback', true, '✓ Perfect X pattern!');
+            } else {
+                showFeedback('gridFeedback', false, '✗ Not quite right. Try forming an X!');
+            }
+        }
+
+        function initColorGame() {
+            const colors = [
+                {name: 'red', color: '#ef4444', order: 0},
+                {name: 'orange', color: '#f97316', order: 1},
+                {name: 'yellow', color: '#eab308', order: 2},
+                {name: 'green', color: '#22c55e', order: 3},
+                {name: 'blue', color: '#3b82f6', order: 4},
+                {name: 'indigo', color: '#6366f1', order: 5},
+                {name: 'violet', color: '#a855f7', order: 6}
+            ];
+            
+            const shuffled = [...colors].sort(() => Math.random() - 0.5);
+            window.colorOrder = [];
+            
+            const container = document.getElementById('colorBoxes');
+            shuffled.forEach((color, idx) => {
+                const box = document.createElement('div');
+                box.className = 'color-box';
+                box.style.background = color.color;
+                box.onclick = () => {
+                    const colorIndex = window.colorOrder.indexOf(idx);
+                    if (colorIndex !== -1) {
+                        // Color is already selected, unselect it
+                        box.classList.remove('selected');
+                        window.colorOrder.splice(colorIndex, 1);
+                    } else {
+                        // Color not selected, select it
+                        box.classList.add('selected');
+                        window.colorOrder.push(idx);
+                    }
+                };
+                box.dataset.order = color.order;
+                container.appendChild(box);
+            });
+        }
+
+        function checkColors() {
+            const boxes = document.querySelectorAll('.color-box');
+            const selectedOrder = window.colorOrder.map(i => parseInt(boxes[i].dataset.order));
+            const isCorrect = selectedOrder.every((val, i) => val === i);
+            
+            if (isCorrect && selectedOrder.length === 7) {
+                games.markComplete('color');
+                showFeedback('colorFeedback', true, '✓ Perfect rainbow order!');
+            } else {
+                showFeedback('colorFeedback', false, '✗ Try again! Click in rainbow order.');
+                window.colorOrder = [];
+                boxes.forEach(box => box.classList.remove('selected'));
+            }
+        }
+
+        function checkWord() {
+            const answer = document.getElementById('wordInput').value.toLowerCase().trim();
+            if (answer === 'puzzle') {
+                games.markComplete('word');
+                showFeedback('wordFeedback', true, '✓ Correct! PUZZLE!');
+            } else {
+                showFeedback('wordFeedback', false, '✗ Try again!');
+            }
+        }
+
+        function initSlider() {
+            const slider = document.getElementById('balanceSlider');
+            const valueDisplay = document.getElementById('sliderValue');
+            slider.oninput = () => {
+                valueDisplay.textContent = slider.value;
+            };
+        }
+
+        function checkSlider() {
+            const value = parseInt(document.getElementById('balanceSlider').value);
+            if (value === 50) {
+                games.markComplete('slider');
+                showFeedback('sliderFeedback', true, '✓ Perfect balance!');
+            } else {
+                showFeedback('sliderFeedback', false, `✗ Close! You're at ${value}`);
+            }
+        }
+
+        function checkLogic() {
+            const answer = document.getElementById('logicSelect').value;
+            if (answer === 'yes') {
+                games.markComplete('logic');
+                showFeedback('logicFeedback', true, '✓ Correct! Logical deduction!');
+            } else if (answer === 'no') {
+                showFeedback('logicFeedback', false, '✗ Think about it again!');
+            }
+        }
+
+        function checkSequence() {
+            const answer = parseInt(document.getElementById('sequenceInput').value);
+            if (answer === 21) {
+                games.markComplete('sequence');
+                showFeedback('sequenceFeedback', true, '✓ Correct! Fibonacci sequence!');
+            } else {
+                showFeedback('sequenceFeedback', false, '✗ Try again!');
+            }
+        }
+
+        function checkCipher() {
+            const answer = document.getElementById('cipherInput').value.toLowerCase().trim();
+            if (answer === 'puzzle') {
+                games.markComplete('cipher');
+                showFeedback('cipherFeedback', true, '✓ Decoded! PUZZLE!');
+            } else {
+                showFeedback('cipherFeedback', false, '✗ Try shifting back 3 letters!');
+            }
+        }
+
+        function hideMemoryNumber() {
+            window.memoryAttempts = 0;
+            window.currentMemoryNumber = document.getElementById('memoryNumber').textContent;
+            document.getElementById('memoryNumber').style.display = 'none';
+            document.getElementById('memoryTest').style.display = 'block';
+            event.target.style.display = 'none';
+        }
+
+        function checkMemory() {
+            const answer = document.getElementById('memoryInput').value.trim();
+            
+            if (answer === window.currentMemoryNumber) {
+                games.markComplete('memory');
+                showFeedback('memoryFeedback', true, '✓ Perfect memory!');
+                window.memoryAttempts = 0;
+            } else {
+                window.memoryAttempts = (window.memoryAttempts || 0) + 1;
+                
+                if (window.memoryAttempts >= 3) {
+                    // Generate new random 4-digit number
+                    const newNumber = Math.floor(1000 + Math.random() * 9000).toString();
+                    window.currentMemoryNumber = newNumber;
+                    window.memoryAttempts = 0;
+                    
+                    // Reset the display
+                    document.getElementById('memoryNumber').textContent = newNumber;
+                    document.getElementById('memoryNumber').style.display = 'inline';
+                    document.getElementById('memoryTest').style.display = 'none';
+                    document.querySelector('[data-game="memory"] button').style.display = 'block';
+                    document.getElementById('memoryInput').value = '';
+                    
+                    showFeedback('memoryFeedback', false, '✗ 3 attempts used. Try memorizing this new number!');
+                    document.getElementById('memoryAttempts').textContent = '';
+                } else {
+                    const remaining = 3 - window.memoryAttempts;
+                    showFeedback('memoryFeedback', false, `✗ Not quite! ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`);
+                    document.getElementById('memoryAttempts').textContent = `Attempts used: ${window.memoryAttempts}/3`;
+                }
+            }
+        }
+
+        function checkCounting() {
+            const answer = parseInt(document.getElementById('countInput').value);
+            if (answer === 8) {
+                games.markComplete('counting');
+                showFeedback('countFeedback', true, '✓ Correct! There are 8 circles!');
+            } else {
+                showFeedback('countFeedback', false, '✗ Count again carefully!');
+            }
+        }
+
+        function resetGame() {
+            games.completed.clear();
+            document.getElementById('secretMessage').classList.remove('revealed');
+            document.getElementById('gamesGrid').style.display = 'grid';
+            document.getElementById('gamesGrid').innerHTML = '';
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0/12 Completed';
+            
+            initGames();
+        }
+
+        initGames();
+    </script>
 </body>
 </html>
