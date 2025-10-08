@@ -40,14 +40,18 @@
         
         .progress-fill {
             height: 30px;
-            background: linear-gradient(90deg, #10b981, #34d399);
+            background: #0ea5e9;
             border-radius: 15px;
-            transition: width 0.5s ease;
+            transition: all 0.5s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
+        }
+        
+        .progress-fill.started {
+            background: linear-gradient(90deg, #10b981, #34d399);
         }
         
         .games-grid {
@@ -268,6 +272,10 @@
                 progressBar.style.width = `${(count / 12) * 100}%`;
                 progressBar.textContent = `${count}/12 Completed`;
                 
+                if (count > 0) {
+                    progressBar.classList.add('started');
+                }
+                
                 if (count === 12) {
                     document.getElementById('secretMessage').classList.add('revealed');
                     document.getElementById('gamesGrid').style.display = 'none';
@@ -396,7 +404,7 @@
                 id: 'memory',
                 title: '11. Memory Test',
                 content: `
-                    <p>Memorize: <strong id="memoryNumber">7394</strong></p>
+                    <p>Memorize: <strong id="memoryNumber"></strong></p>
                     <button onclick="hideMemoryNumber()">Hide & Test</button>
                     <div id="memoryTest" style="display:none;">
                         <input type="text" id="memoryInput" placeholder="Enter the number...">
@@ -410,7 +418,8 @@
                 id: 'counting',
                 title: '12. Shape Counter',
                 content: `
-                    <p>How many circles? ⭕⭕🔵⭕🔵⬜⭕🔵⭕</p>
+                    <p id="shapeQuestion">How many hollow (⭕) and blue (🔵) circles?</p>
+                    <p id="shapeDisplay" style="font-size: 1.5em; letter-spacing: 3px; word-wrap: break-word; overflow-wrap: break-word;"></p>
                     <input type="number" id="countInput" placeholder="Number of circles...">
                     <button onclick="checkCounting()">Submit</button>
                     <div id="countFeedback"></div>
@@ -438,6 +447,8 @@
             initColorGame();
             initMathGame();
             initSlider();
+            initMemoryGame();
+            initCountingGame();
         }
 
         function showFeedback(elementId, isCorrect, message) {
@@ -577,6 +588,43 @@
             };
         }
 
+        function initMemoryGame() {
+            const memoryNumber = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('memoryNumber').textContent = memoryNumber;
+        }
+
+        function initCountingGame() {
+            const shapes = ['⭕', '🔵', '⬜', '⬛', '🟡', '🔺', '🛑'];
+            const circles = ['⭕', '🔵'];
+            const nonCircles = ['⬜', '⬛', '🟡', '🔺', '🛑'];
+            
+            // Random number of circles between 5 and 10
+            const numCircles = Math.floor(Math.random() * 6) + 5;
+            // Random number of non-circles between 2 and 5
+            const numNonCircles = Math.floor(Math.random() * 4) + 2;
+            
+            let shapeArray = [];
+            
+            // Add random circles
+            for (let i = 0; i < numCircles; i++) {
+                shapeArray.push(circles[Math.floor(Math.random() * circles.length)]);
+            }
+            
+            // Add random non-circles
+            for (let i = 0; i < numNonCircles; i++) {
+                shapeArray.push(nonCircles[Math.floor(Math.random() * nonCircles.length)]);
+            }
+            
+            // Shuffle the array
+            shapeArray.sort(() => Math.random() - 0.5);
+            
+            // Store the correct answer
+            window.circleCount = numCircles;
+            
+            // Display the shapes
+            document.getElementById('shapeDisplay').textContent = shapeArray.join('');
+        }
+
         function checkSlider() {
             const value = parseInt(document.getElementById('balanceSlider').value);
             if (value === 50) {
@@ -636,8 +684,8 @@
                 window.memoryAttempts = (window.memoryAttempts || 0) + 1;
                 
                 if (window.memoryAttempts >= 3) {
-                    // Generate new random 4-digit number
-                    const newNumber = Math.floor(1000 + Math.random() * 9000).toString();
+                    // Generate new random 6-digit number
+                    const newNumber = Math.floor(100000 + Math.random() * 900000).toString();
                     window.currentMemoryNumber = newNumber;
                     window.memoryAttempts = 0;
                     
@@ -660,9 +708,9 @@
 
         function checkCounting() {
             const answer = parseInt(document.getElementById('countInput').value);
-            if (answer === 8) {
+            if (answer === window.circleCount) {
                 games.markComplete('counting');
-                showFeedback('countFeedback', true, '✓ Correct! There are 8 circles!');
+                showFeedback('countFeedback', true, `✓ Correct! There are ${window.circleCount} circles!`);
             } else {
                 showFeedback('countFeedback', false, '✗ Count again carefully!');
             }
@@ -675,8 +723,9 @@
             document.getElementById('gamesGrid').innerHTML = '';
             
             const progressBar = document.getElementById('progressBar');
-            progressBar.style.width = '0%';
+            progressBar.style.width = '100%';
             progressBar.textContent = '0/12 Completed';
+            progressBar.classList.remove('started');
             
             initGames();
         }
