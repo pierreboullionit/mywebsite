@@ -297,7 +297,7 @@
                 id: 'riddle',
                 title: '1. Riddle Master',
                 content: `
-                    <p>I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?</p>
+                    <p id="riddleText"></p>
                     <input type="text" id="riddleInput" placeholder="Your answer...">
                     <button onclick="checkRiddle()">Submit</button>
                     <div id="riddleFeedback"></div>
@@ -317,7 +317,7 @@
                 id: 'pattern',
                 title: '3. Pattern Recognition',
                 content: `
-                    <p>Complete the sequence: 2, 6, 12, 20, 30, ?</p>
+                    <p id="patternText"></p>
                     <input type="number" id="patternInput" placeholder="Next number...">
                     <button onclick="checkPattern()">Submit</button>
                     <div id="patternFeedback"></div>
@@ -327,7 +327,7 @@
                 id: 'grid',
                 title: '4. Grid Master',
                 content: `
-                    <p>Click to form an "X" pattern:</p>
+                    <p id="gridInstruction"></p>
                     <div class="grid-game" id="gridGame"></div>
                     <button onclick="checkGrid()">Check Pattern</button>
                     <div id="gridFeedback"></div>
@@ -405,7 +405,7 @@
                 title: '11. Memory Test',
                 content: `
                     <p>Memorize: <strong id="memoryNumber"></strong></p>
-                    <button onclick="hideMemoryNumber()">Hide & Test</button>
+                    <button onclick="hideMemoryNumber()">Hide & Test your memory</button>
                     <div id="memoryTest" style="display:none;">
                         <input type="text" id="memoryInput" placeholder="Enter the number...">
                         <button onclick="checkMemory()">Submit</button>
@@ -449,6 +449,8 @@
             initSlider();
             initMemoryGame();
             initCountingGame();
+            initRiddleGame();
+            initPatternGame();
         }
 
         function showFeedback(elementId, isCorrect, message) {
@@ -457,11 +459,141 @@
             el.textContent = message;
         }
 
+        function initRiddleGame() {
+            const riddles = [
+                {
+                    question: "I speak without a mouth and hear without ears. I have no body, but come alive with wind. What am I?",
+                    answers: ["echo", "an echo"]
+                },
+                {
+                    question: "The more you take, the more you leave behind. What am I?",
+                    answers: ["footsteps", "footstep", "steps"]
+                },
+                {
+                    question: "I have cities, but no houses. I have mountains, but no trees. I have water, but no fish. What am I?",
+                    answers: ["map", "a map"]
+                },
+                {
+                    question: "What has keys but no locks, space but no room, and you can enter but can't go inside?",
+                    answers: ["keyboard", "a keyboard"]
+                },
+                {
+                    question: "I'm tall when I'm young, and short when I'm old. What am I?",
+                    answers: ["candle", "a candle"]
+                },
+                {
+                    question: "What has a head and a tail but no body?",
+                    answers: ["coin", "a coin"]
+                },
+                {
+                    question: "What gets wet while drying?",
+                    answers: ["towel", "a towel"]
+                },
+                {
+                    question: "What can travel around the world while staying in a corner?",
+                    answers: ["stamp", "a stamp"]
+                },
+                {
+                    question: "I have branches, but no fruit, trunk or leaves. What am I?",
+                    answers: ["bank", "a bank"]
+                },
+                {
+                    question: "What has hands but cannot clap?",
+                    answers: ["clock", "a clock", "watch", "a watch"]
+                },
+                {
+                    question: "What has a neck but no head?",
+                    answers: ["bottle", "a bottle"]
+                },
+                {
+                    question: "What can you catch but never throw?",
+                    answers: ["cold", "a cold", "illness"]
+                }
+            ];
+            
+            const randomRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+            window.currentRiddle = randomRiddle;
+            document.getElementById('riddleText').textContent = randomRiddle.question;
+        }
+
+        function initPatternGame() {
+            const patterns = [
+                {
+                    sequence: "2, 6, 12, 20, 30, ?",
+                    answer: 42,
+                    description: "n(n+1)"
+                },
+                {
+                    sequence: "1, 4, 9, 16, 25, ?",
+                    answer: 36,
+                    description: "Perfect squares"
+                },
+                {
+                    sequence: "2, 4, 8, 16, 32, ?",
+                    answer: 64,
+                    description: "Powers of 2"
+                },
+                {
+                    sequence: "3, 6, 12, 24, 48, ?",
+                    answer: 96,
+                    description: "Multiply by 2"
+                },
+                {
+                    sequence: "1, 3, 6, 10, 15, ?",
+                    answer: 21,
+                    description: "Triangular numbers"
+                },
+                {
+                    sequence: "5, 10, 20, 40, 80, ?",
+                    answer: 160,
+                    description: "Multiply by 2"
+                },
+                {
+                    sequence: "100, 50, 25, 12.5, 6.25, ?",
+                    answer: 3.125,
+                    description: "Divide by 2"
+                },
+                {
+                    sequence: "1, 2, 4, 7, 11, ?",
+                    answer: 16,
+                    description: "Add 1, 2, 3, 4, 5..."
+                },
+                {
+                    sequence: "2, 5, 11, 23, 47, ?",
+                    answer: 95,
+                    description: "Multiply by 2 then add 1"
+                },
+                {
+                    sequence: "3, 9, 27, 81, 243, ?",
+                    answer: 729,
+                    description: "Powers of 3"
+                },
+                {
+                    sequence: "1, 8, 27, 64, 125, ?",
+                    answer: 216,
+                    description: "Perfect cubes"
+                },
+                {
+                    sequence: "0, 1, 1, 2, 3, 5, 8, ?",
+                    answer: 13,
+                    description: "Fibonacci"
+                }
+            ];
+            
+            const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            window.currentPattern = randomPattern;
+            document.getElementById('patternText').textContent = `Complete the sequence: ${randomPattern.sequence}`;
+        }
+
         function checkRiddle() {
             const answer = document.getElementById('riddleInput').value.toLowerCase().trim();
-            if (answer === 'echo' || answer === 'an echo') {
+            const isCorrect = window.currentRiddle.answers.some(validAnswer => 
+                answer === validAnswer.toLowerCase()
+            );
+            
+            if (isCorrect) {
                 games.markComplete('riddle');
-                showFeedback('riddleFeedback', true, '✓ Correct! It\'s an echo!');
+                showFeedback('riddleFeedback', true, '✓ Correct!');
             } else {
                 showFeedback('riddleFeedback', false, '✗ Try again!');
             }
@@ -485,18 +617,67 @@
         }
 
         function checkPattern() {
-            const answer = parseInt(document.getElementById('patternInput').value);
-            if (answer === 42) {
+            const answer = parseFloat(document.getElementById('patternInput').value);
+            if (answer === window.currentPattern.answer) {
                 games.markComplete('pattern');
-                showFeedback('patternFeedback', true, '✓ Correct! The pattern is n(n+1)');
+                showFeedback('patternFeedback', true, `✓ Correct! The pattern is ${window.currentPattern.description}`);
             } else {
                 showFeedback('patternFeedback', false, '✗ Try again!');
             }
         }
 
         function initGridGame() {
+            const patterns = [
+                {
+                    name: "X",
+                    pattern: [true, false, true, false, true, false, true, false, true],
+                    instruction: 'Click to form an "X" pattern:'
+                },
+                {
+                    name: "L",
+                    pattern: [true, false, false, true, false, false, true, true, true],
+                    instruction: 'Click to form an "L" pattern:'
+                },
+                {
+                    name: "H",
+                    pattern: [true, false, true, true, true, true, true, false, true],
+                    instruction: 'Click to form an "H" pattern:'
+                },
+                {
+                    name: "T",
+                    pattern: [true, true, true, false, true, false, false, true, false],
+                    instruction: 'Click to form a "T" pattern:'
+                },
+                {
+                    name: "Plus",
+                    pattern: [false, true, false, true, true, true, false, true, false],
+                    instruction: 'Click to form a "+" (plus) pattern:'
+                },
+                {
+                    name: "Frame",
+                    pattern: [true, true, true, true, false, true, true, true, true],
+                    instruction: 'Click to form a frame pattern (hollow square):'
+                },
+                {
+                    name: "Corners",
+                    pattern: [true, false, true, false, false, false, true, false, true],
+                    instruction: 'Click the four corners:'
+                },
+                {
+                    name: "Diagonal",
+                    pattern: [true, false, false, false, true, false, false, false, true],
+                    instruction: 'Click to form a "\\" diagonal pattern:'
+                }
+            ];
+            
+            const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            window.currentGridPattern = randomPattern;
+            document.getElementById('gridInstruction').textContent = randomPattern.instruction;
+            
             const grid = document.getElementById('gridGame');
+            grid.innerHTML = '';
             window.gridState = Array(9).fill(false);
+            
             for (let i = 0; i < 9; i++) {
                 const cell = document.createElement('div');
                 cell.className = 'grid-cell';
@@ -509,13 +690,12 @@
         }
 
         function checkGrid() {
-            const xPattern = [true, false, true, false, true, false, true, false, true];
-            const isCorrect = window.gridState.every((val, i) => val === xPattern[i]);
+            const isCorrect = window.gridState.every((val, i) => val === window.currentGridPattern.pattern[i]);
             if (isCorrect) {
                 games.markComplete('grid');
-                showFeedback('gridFeedback', true, '✓ Perfect X pattern!');
+                showFeedback('gridFeedback', true, `✓ Perfect ${window.currentGridPattern.name} pattern!`);
             } else {
-                showFeedback('gridFeedback', false, '✗ Not quite right. Try forming an X!');
+                showFeedback('gridFeedback', false, '✗ Not quite right. Try again!');
             }
         }
 
